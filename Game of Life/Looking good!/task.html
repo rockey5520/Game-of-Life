@@ -1,0 +1,32 @@
+<h2>Description</h2>
+
+<p>Now you are ready to put aside the console and make your application look like this:</p>
+
+<p><img alt="" height="358" src="https://ucarecdn.com/95bf7d6c-cf3f-48c5-b9d1-8e4cb5feb6f8/" width="321"></p>
+
+<p>Just create a window that displays the field of the game and counters (current generation and number of alive cells). For displaying the field, you can use methods that draw lines and fill rectangles. For counters, use simple text labels.</p>
+
+<p>It may look like you need to make a different application, but if you’re using the MVC pattern, you can add one or two classes to your code.</p>
+
+<p>The application should start and begin to update its look with every new generation in the game. For this stage no any interaction with the user is necessary.</p>
+
+<h2>Testing</h2>
+
+<p>You should create a class named <code class="language-java">GameOfLife</code>. This will be a class that represents a GUI. Here's its initial template. Note that the constructor should not have any parameters.</p>
+
+<pre><code class="language-java">package life;
+
+import javax.swing.*;
+
+public class GameOfLife extends JFrame {
+    public GameOfLife() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 300);
+        setVisible(true);
+    }
+}
+</code></pre>
+
+<p>For the testing reasons, you need to set the name of each component using the method <code class="language-java">component.setName(String name)</code>.</p>
+
+<p>Name your labels with names <code class="language-java">"GenerationLabel"</code> and <code class="language-java">"AliveLabel"</code>.</p>

@@ -1,0 +1,75 @@
+<h2>Description</h2>
+
+<p>The progress of the game is evolution: one generation changes another. Each generation is fully determined by the previous generation. The future of each cell depends on its neighbours (adjacent cells).</p>
+
+<p><img alt="" height="236" src="https://ucarecdn.com/f200bfdb-ba29-4ac4-b160-1f7010fdef80/" width="237"></p>
+
+<p>As you can notice, each cell has eight neighbors. We consider the universe to be periodic: border cells also have eight neighbors. For example:<br>
+	<br>
+	If cell is right-border, its right (east) neighbor is leftmost cell in the same row.<br>
+	If cell is bottom-border, its bottom (south) neighbor is topmost cell in the same column.<br>
+	<br>
+	Corner cells use both solutions.</p>
+
+<p><img alt="" height="300" src="https://ucarecdn.com/f6ff63b1-ece2-454b-96fc-f4df385fe25a/" width="621"></p>
+
+<p>Evolution is controlled by two rules:</p>
+
+<ul>
+	<li>
+		<p>An alive cell survives if has two or three alive neighbors; otherwise, it dies of boredom (&lt;2) or overpopulation (&gt;3)</p>
+	</li>
+	<li>
+		<p>A dead cell is reborn if it has exactly three alive neighbors</p>
+	</li>
+</ul>
+
+<p>The program should apply these rules to each cell in order to compute the next generation.</p>
+
+<p>At this stage, you should make several consecutive generations. For this, you have to store the state of the universe in memory.</p>
+
+<p>Use 2-dimensional arrays for this task. You need two arrays: one for the current generation and one for the next. Add these arrays to the program and implement the algorithm of getting the next generation.<br>
+	<br>
+	NOTE: it will be better to encapsulate the state of the universe and the generation algorithm in separate classes. You will understand why soon.</p>
+
+<p>The input data is three numbers in one line. The first is N (N&gt;0), the size of the universe; the second is S, a long, that you should use as seed for your Random object; the third is M (M≥0), the number of generations your program should create.<br>
+	<br>
+	Output data: a square matrix NxN: there must be N lines with N characters in each line. If there is an alive cell, place the letter ‘O’, otherwise, whitespace. The matrix should describe the generation after M steps from the beginning. So if M==8, you should find generation #9 (first is #1).</p>
+
+<h2>Examples</h2>
+
+<p>The lines that start with <code class="java">&gt;</code> represent user input.</p>
+
+<p><strong>Example 1:</strong></p>
+
+<pre><code class="language-no-highlight">&gt; 4 4 0
+OOOO
+O O 
+   O
+OOO </code></pre>
+
+<p><strong>Example 2: </strong></p>
+
+<pre><code class="language-no-highlight">&gt; 8 1 10
+ O  OO  
+OO   OO 
+O     O 
+        
+  O     
+  O O   
+     OO 
+O   OO O</code></pre>
+
+<p><strong>Example 3:</strong></p>
+
+<pre><code class="language-no-highlight">&gt; 10 10 100
+          
+          
+    O     
+   O O    
+    O     
+          
+          
+          
+          
+          </code></pre>

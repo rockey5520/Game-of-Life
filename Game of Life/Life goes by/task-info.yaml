@@ -231,6 +231,149 @@ files:
         fun Char.isAlive(): Boolean = this != ' '
     }
   learner_created: false
+- name: src/life/Universe.java
+  visible: true
+  text: |-
+    package life;
+
+    import java.util.ArrayList;
+    import java.util.BitSet;
+    import java.util.List;
+    import java.util.Random;
+
+    import static java.util.stream.Collectors.joining;
+    import static java.util.stream.IntStream.range;
+
+    public class Universe {
+      final List<BitSet> map;
+
+      Universe(final int size, final long seed) {
+        this(size);
+        initialise(seed);
+      }
+
+      Universe(final int size) {
+        map = new ArrayList<>(size);
+        range(0, size).mapToObj(i -> new BitSet(size)).forEach(map::add);
+      }
+
+      void initialise(long seed) {
+        final var random = new Random(seed);
+        map.forEach(row -> range(0, map.size()).filter(i -> random.nextBoolean()).forEach(row::set));
+      }
+
+      private String getRowAsString(BitSet row) {
+        return range(0, map.size()).mapToObj(i -> row.get(i) ? "O" : " ").collect(joining());
+      }
+
+      boolean isLive(int row, int col) {
+        return map.get(normalise(row)).get(normalise(col));
+      }
+
+      int getValue(int row, int col) {
+        return isLive(row, col) ? 1 : 0;
+      }
+
+      int getNeighboursCount(int row, int col) {
+        return getValue(row - 1, col - 1)
+            + getValue(row - 1, col)
+            + getValue(row - 1, col + 1)
+            + getValue(row, col - 1)
+            + getValue(row, col + 1)
+            + getValue(row + 1, col - 1)
+            + getValue(row + 1, col)
+            + getValue(row + 1, col + 1);
+      }
+
+      int normalise(int i) {
+        if (i == -1) {
+          return map.size() - 1;
+        }
+        if (i == map.size()) {
+          return 0;
+        }
+        return i;
+      }
+
+      public int size() {
+        return map.size();
+      }
+
+      public void print() {
+        map.stream().map(this::getRowAsString).forEach(System.out::println);
+      }
+
+      public void setCell(final int row, final int col, final boolean isLive) {
+        map.get(row).set(col, isLive);
+      }
+    }
+  learner_created: true
+- name: src/life/GenerationAlgorithm.java
+  visible: true
+  text: |-
+    package life;
+
+    public class GenerationAlgorithm {
+      static Universe getNextGeneration(Universe currentUniverse) {
+        Universe nextGeneration = new Universe(currentUniverse.size());
+
+        for (int row = 0; row < currentUniverse.size(); ++row) {
+          for (int col = 0; col < currentUniverse.size(); ++col) {
+            final int neighbours = currentUniverse.getNeighboursCount(row, col);
+            final var isLive = neighbours == 3 || neighbours == 2 && currentUniverse.isLive(row, col);
+            nextGeneration.setCell(row, col, isLive);
+          }
+        }
+        return nextGeneration;
+      }
+    }
+  learner_created: true
+- name: src/life/Main.java
+  visible: true
+  text: |+
+    package life;
+
+    import static java.lang.System.in;
+    import static life.GenerationAlgorithm.getNextGeneration;
+
+    import java.util.Scanner;
+
+    public class Main {
+
+      public static void main(String[] args) {
+        // stage 2
+        Scanner scanner = new Scanner(in);
+        final int UniverseSize = scanner.nextInt();
+        final long seed = scanner.nextLong();
+        final int generations = scanner.nextInt();
+        scanner.close();
+
+        Universe universe = new Universe(UniverseSize, seed);
+        for (int i = 0; i < generations; ++i) {
+          universe = getNextGeneration(universe);
+        }
+        universe.print();
+
+        /*//stage 1
+        Scanner scanner = new Scanner(in);
+        int arraySize = scanner.nextInt();
+        int seed = scanner.nextInt();
+        Random random = new Random(seed);
+
+        for (int i = 0; i < arraySize; i++) {
+          for (int j = 0; j < arraySize; j++) {
+            if (random.nextBoolean()) {
+              System.out.print("O");
+            } else {
+              System.out.print(" ");
+            }
+          }
+          System.out.println();
+        }*/
+      }
+    }
+
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/54/stages/296/implement
-status: Unchecked
+status: Solved
 record: -1

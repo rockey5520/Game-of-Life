@@ -13,6 +13,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Game of Life/task" />
+            <option value="$PROJECT_DIR$/Problems/A long process" />
+            <option value="$PROJECT_DIR$/Problems/Output names of the methods" />
+            <option value="$PROJECT_DIR$/Problems/Returning values from an anonymous class" />
             <option value="$PROJECT_DIR$/util" />
           </set>
         </option>

@@ -1,0 +1,12 @@
+type: code
+files:
+- name: src/Main.java
+  visible: true
+  text: "class CreateInstance {\n\n    public static SuperClass create() {\n\n   \
+    \     SuperClass instance = /* create an instance of an anonymous class here,\
+    \ \n                                 do not forget ; on the end */\n\n       \
+    \ return instance;\n    }\n}"
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/2555
+status: Solved
+record: -1

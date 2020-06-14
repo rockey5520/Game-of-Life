@@ -15,7 +15,12 @@
             <option value="$PROJECT_DIR$/Game of Life/task" />
             <option value="$PROJECT_DIR$/Problems/A long process" />
             <option value="$PROJECT_DIR$/Problems/Calculate the number of distinct characters" />
+            <option value="$PROJECT_DIR$/Problems/Expression closure" />
+            <option value="$PROJECT_DIR$/Problems/Finding and starting a thread" />
             <option value="$PROJECT_DIR$/Problems/Getting current thread info" />
+            <option value="$PROJECT_DIR$/Problems/Handling interruptions" />
+            <option value="$PROJECT_DIR$/Problems/Interrupting a thread" />
+            <option value="$PROJECT_DIR$/Problems/Max of two integers" />
             <option value="$PROJECT_DIR$/Problems/Numbers filter" />
             <option value="$PROJECT_DIR$/Problems/Ordering the execution of threads" />
             <option value="$PROJECT_DIR$/Problems/Output names of the methods" />

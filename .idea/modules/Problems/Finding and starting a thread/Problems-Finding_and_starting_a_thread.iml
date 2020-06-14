@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":Problems-Finding_and_starting_a_thread" external.linked.project.path="$MODULE_DIR$/../../../../Problems/Finding and starting a thread" external.root.project.path="$MODULE_DIR$/../../../.." external.system.id="GRADLE" external.system.module.group="Game_of_Life" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../../Problems/Finding and starting a thread">
+      <excludeFolder url="file://$MODULE_DIR$/../../../../Problems/Finding and starting a thread/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../../Problems/Finding and starting a thread/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../../Problems/Finding and starting a thread/out" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

@@ -1,0 +1,50 @@
+type: code
+files:
+- name: src/Main.java
+  visible: true
+  text: |-
+    class InterruptedExample {
+
+        private static long mainThreadId = Thread.currentThread().getId();
+
+        public static void main(String[] args) throws InterruptedException {
+
+            Worker worker = new Worker();
+
+            // write your code here
+        }
+
+        // Don't change the code below
+        static class Worker extends Thread {
+
+            @Override
+            public void run() {
+
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("You need to wait longer!");
+                }
+
+                final long currentId = Thread.currentThread().getId();
+
+                if (currentId == mainThreadId) {
+                    throw new RuntimeException("You must start a new thread!");
+                }
+
+                int k = 0;
+                while (true) {
+                    if (!isInterrupted()) {
+                        k++;
+                    } else {
+                        System.out.println("Interrupted");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/2542
+status: Solved
+record: -1

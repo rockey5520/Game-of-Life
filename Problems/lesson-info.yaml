@@ -10,3 +10,8 @@ content:
 - VeganPizza
 - Ordering the execution of threads
 - Calculate the number of distinct characters
+- Handling interruptions
+- Interrupting a thread
+- Finding and starting a thread
+- Max of two integers
+- Expression closure

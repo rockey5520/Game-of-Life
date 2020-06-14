@@ -1,107 +1,98 @@
 package life;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Random;
 
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.IntStream.range;
+class Universe {
+  static private int[] shift = {-1, 0, 1};
 
-public class Universe {
-  private final List<BitSet> map;
-  private int generation = 1;
+  private int generation = 0;
+  private int size;
+  Cell[][] universe;
 
-  Universe(final int size, final long seed) {
-    this(size);
-    initialise(seed);
-  }
+  public Universe(int size) {
+    this.size = size;
+    universe = new Cell[this.size][this.size];
 
-  Universe(final int size) {
-    map = new ArrayList<>(size);
-    range(0, size).mapToObj(i -> new BitSet(size)).forEach(map::add);
-  }
-
-  Universe initialise(long seed) {
-    final var random = new Random(seed);
-    map.forEach(row -> range(0, map.size()).filter(i -> random.nextBoolean()).forEach(row::set));
-    return this;
-  }
-
-  Universe initialise() {
-    final var random = new Random();
-    map.forEach(row -> range(0, map.size()).filter(i -> random.nextBoolean()).forEach(row::set));
-    return this;
-  }
-
-  private String getRowAsString(BitSet row) {
-    return range(0, map.size()).mapToObj(i -> row.get(i) ? "O" : " ").collect(joining());
-  }
-
-  boolean isLive(int row, int col) {
-    return map.get(normalise(row)).get(normalise(col));
-  }
-
-  int getValue(int row, int col) {
-    return isLive(row, col) ? 1 : 0;
-  }
-
-  int getNeighboursCount(int row, int col) {
-    return getValue(row - 1, col - 1)
-        + getValue(row - 1, col)
-        + getValue(row - 1, col + 1)
-        + getValue(row, col - 1)
-        + getValue(row, col + 1)
-        + getValue(row + 1, col - 1)
-        + getValue(row + 1, col)
-        + getValue(row + 1, col + 1);
-  }
-
-  int normalise(int i) {
-    if (i == -1) {
-      return map.size() - 1;
+    for (int i = 0; i < this.size; ++i) {
+      for (int j = 0; j < this.size; ++j) {
+        universe[i][j] = new Cell();
+      }
     }
-    if (i == map.size()) {
-      return 0;
-    }
-    return i;
   }
 
-  public int size() {
-    return map.size();
+  public int getSize() {
+    return size;
   }
 
-  public void printMap() {
-    map.stream().map(this::getRowAsString).forEach(System.out::println);
-  }
-
-  public void setCell(final int row, final int col, final boolean isLive) {
-    map.get(row).set(col, isLive);
-  }
-
-  int getAliveCount() {
-    return map.stream().mapToInt(BitSet::cardinality).sum();
-  }
-
-  int getGeneration() {
+  public int getGeneration() {
     return generation;
   }
 
-  void nextGeneration() {
-    List<BitSet> next = new ArrayList<>(map.size());
+  public void setGeneration(int generation) {
+    this.generation = generation;
+  }
 
-    for (int row = 0; row < map.size(); ++row) {
-      final var nextRow = new BitSet(map.size());
-      for (int col = 0; col < map.size(); ++col) {
-        final int neighbours = getNeighboursCount(row, col);
-        final var isLive = neighbours == 3 || neighbours == 2 && isLive(row, col);
-        nextRow.set(col, isLive);
-      }
-      next.add(nextRow);
-    }
-    for (int i = 0; i < map.size(); ++i) {
-      map.set(i, next.get(i));
-    }
+  public void increaseGeneration() {
     ++generation;
+  }
+
+  public Cell[][] getUniverse() {
+    return universe;
+  }
+
+  public Cell[] at(int i) {
+    return universe[i];
+  }
+
+  public Cell at(int i, int j) {
+    return universe[i][j];
+  }
+
+  public byte countAliveNeighbours(int i, int j) {
+    byte alive = 0;
+
+    for (int i_idx : shift) {
+      for (int j_idx : shift) {
+        if (i_idx == j_idx && i_idx == 0) {
+          continue;
+        }
+
+        int x = (i + i_idx) % size;
+        if (x < 0) {
+          x = size - 1;
+        }
+
+        int y = (j + j_idx) % size;
+        if (y < 0) {
+          y = size - 1;
+        }
+        if (universe[x][y].isAlive()) {
+          ++alive;
+        }
+      }
+    }
+
+    return alive;
+  }
+
+  static void copy(Universe from, Universe to) {
+    int size = from.getSize();
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        Cell cell = to.at(i, j);
+        cell.setState(from.at(i, j).isAlive());
+      }
+    }
+  }
+
+  public int getNumberOfAliveCells() {
+    int alive = 0;
+
+    for (Cell[] row : universe) {
+      for (Cell cell : row) {
+        alive += cell.isAlive() ? 1 : 0;
+      }
+    }
+
+    return alive;
   }
 }

@@ -218,32 +218,240 @@ files:
         }
     }
   learner_created: false
+- name: src/life/Universe.java
+  visible: true
+  text: |-
+    package life;
+
+    import java.util.ArrayList;
+    import java.util.BitSet;
+    import java.util.List;
+    import java.util.Random;
+
+    import static java.util.stream.Collectors.joining;
+    import static java.util.stream.IntStream.range;
+
+    public class Universe {
+      private final List<BitSet> map;
+      private int generation = 1;
+
+      Universe(final int size, final long seed) {
+        this(size);
+        initialise(seed);
+      }
+
+      Universe(final int size) {
+        map = new ArrayList<>(size);
+        range(0, size).mapToObj(i -> new BitSet(size)).forEach(map::add);
+      }
+
+      Universe initialise(long seed) {
+        final var random = new Random(seed);
+        map.forEach(row -> range(0, map.size()).filter(i -> random.nextBoolean()).forEach(row::set));
+        return this;
+      }
+
+      Universe initialise() {
+        final var random = new Random();
+        map.forEach(row -> range(0, map.size()).filter(i -> random.nextBoolean()).forEach(row::set));
+        return this;
+      }
+
+      private String getRowAsString(BitSet row) {
+        return range(0, map.size()).mapToObj(i -> row.get(i) ? "O" : " ").collect(joining());
+      }
+
+      boolean isLive(int row, int col) {
+        return map.get(normalise(row)).get(normalise(col));
+      }
+
+      int getValue(int row, int col) {
+        return isLive(row, col) ? 1 : 0;
+      }
+
+      int getNeighboursCount(int row, int col) {
+        return getValue(row - 1, col - 1)
+            + getValue(row - 1, col)
+            + getValue(row - 1, col + 1)
+            + getValue(row, col - 1)
+            + getValue(row, col + 1)
+            + getValue(row + 1, col - 1)
+            + getValue(row + 1, col)
+            + getValue(row + 1, col + 1);
+      }
+
+      int normalise(int i) {
+        if (i == -1) {
+          return map.size() - 1;
+        }
+        if (i == map.size()) {
+          return 0;
+        }
+        return i;
+      }
+
+      public int size() {
+        return map.size();
+      }
+
+      public void printMap() {
+        map.stream().map(this::getRowAsString).forEach(System.out::println);
+      }
+
+      public void setCell(final int row, final int col, final boolean isLive) {
+        map.get(row).set(col, isLive);
+      }
+
+      int getAliveCount() {
+        return map.stream().mapToInt(BitSet::cardinality).sum();
+      }
+
+      int getGeneration() {
+        return generation;
+      }
+
+      void nextGeneration() {
+        List<BitSet> next = new ArrayList<>(map.size());
+
+        for (int row = 0; row < map.size(); ++row) {
+          final var nextRow = new BitSet(map.size());
+          for (int col = 0; col < map.size(); ++col) {
+            final int neighbours = getNeighboursCount(row, col);
+            final var isLive = neighbours == 3 || neighbours == 2 && isLive(row, col);
+            nextRow.set(col, isLive);
+          }
+          next.add(nextRow);
+        }
+        for (int i = 0; i < map.size(); ++i) {
+          map.set(i, next.get(i));
+        }
+        ++generation;
+      }
+    }
+  learner_created: true
+- name: src/life/GenerationAlgorithm.java
+  visible: true
+  text: |-
+    package life;
+
+    public class GenerationAlgorithm {
+      static Universe getNextGeneration(Universe currentUniverse) {
+        Universe nextGeneration = new Universe(currentUniverse.size());
+
+        for (int row = 0; row < currentUniverse.size(); ++row) {
+          for (int col = 0; col < currentUniverse.size(); ++col) {
+            final int neighbours = currentUniverse.getNeighboursCount(row, col);
+            final var isLive = neighbours == 3 || neighbours == 2 && currentUniverse.isLive(row, col);
+            nextGeneration.setCell(row, col, isLive);
+          }
+        }
+        return nextGeneration;
+      }
+    }
+  learner_created: true
+- name: src/life/Main.java
+  visible: true
+  text: |+
+    package life;
+
+    import static java.lang.System.in;
+    import static life.GenerationAlgorithm.getNextGeneration;
+
+    import java.io.IOException;
+    import java.util.Scanner;
+
+    public class Main {
+
+      public static void main(String[] args) throws InterruptedException {
+    //stage 3
+        Scanner scanner = new Scanner(in);
+        int universeSize = scanner.nextInt();
+        final int generations = 11;
+        scanner.close();
+
+        Universe universe = new Universe(universeSize).initialise();
+
+        for (int i = 0; i < generations; ++i) {
+          System.out.printf("Generation #%d%nAlive: %d%n", universe.getGeneration(),
+              universe.getAliveCount());
+          universe.printMap();
+          universe.nextGeneration();
+          Thread.sleep(1000);
+          clearScreen();
+        }
+      }
+
+      static void clearScreenOld() {
+        try {
+          if (System.getProperty("os.name").contains("Windows"))
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+          else
+            Runtime.getRuntime().exec("clear");
+        } catch (IOException | InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+
+      public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+      }
+    }
+        /*
+        // stage 2
+        Scanner scanner = new Scanner(in);
+        final int UniverseSize = scanner.nextInt();
+        final long seed = scanner.nextLong();
+        final int generations = scanner.nextInt();
+        scanner.close();
+
+        Universe universe = new Universe(UniverseSize, seed);
+        for (int i = 0; i < generations; ++i) {
+          universe = getNextGeneration(universe);
+        }
+        universe.print();
+    */
+
+        /*//stage 1
+        Scanner scanner = new Scanner(in);
+        int arraySize = scanner.nextInt();
+        int seed = scanner.nextInt();
+        Random random = new Random(seed);
+
+        for (int i = 0; i < arraySize; i++) {
+          for (int j = 0; j < arraySize; j++) {
+            if (random.nextBoolean()) {
+              System.out.print("O");
+            } else {
+              System.out.print(" ");
+            }
+          }
+          System.out.println();
+        }*/
+
+
+  learner_created: true
 - name: src/life/GameOfLife.java
   visible: true
-  text: |
-    package life;
-
-    import javax.swing.*;
-
-    public class GameOfLife extends JFrame {
-        public GameOfLife() {
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(300, 300);
-            setVisible(true);
-        }
-    }
-  learner_created: false
-- name: src/life/ApplicationRunner.java
+  learner_created: true
+- name: src/life/DrawUI.java
   visible: true
-  text: |
-    package life;
-
-    public class ApplicationRunner {
-        public static void main(String[] args) {
-            new GameOfLife();
-        }
-    }
-  learner_created: false
+  learner_created: true
+- name: src/life/Earth.java
+  visible: true
+  learner_created: true
+- name: src/life/DrawPanel.java
+  visible: true
+  learner_created: true
+- name: src/life/Cell.java
+  visible: true
+  learner_created: true
+- name: src/life/Controller.java
+  visible: true
+  learner_created: true
+- name: src/life/UniverseGenerator.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/54/stages/298/implement
-status: Unchecked
-record: -1
+status: Solved
+record: 4

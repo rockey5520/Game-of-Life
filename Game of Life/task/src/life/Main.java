@@ -1,16 +1,23 @@
 package life;
 
 import static java.lang.System.in;
-import static life.GenerationAlgorithm.getNextGeneration;
 
 import java.io.IOException;
+
+
 import java.util.Scanner;
 
 public class Main {
 
   public static void main(String[] args) throws InterruptedException {
-//stage 3
-    Scanner scanner = new Scanner(in);
+    //stage 4
+    Controller controller = new Controller(new Universe(50), new GameOfLife());
+    controller.showUniverse();
+    while (true) {
+      controller.evolve();
+    }
+/*//stage 3
+  Scanner scanner = new Scanner(in);
     int universeSize = scanner.nextInt();
     final int generations = 11;
     scanner.close();
@@ -24,6 +31,7 @@ public class Main {
       universe.nextGeneration();
       Thread.sleep(1000);
       clearScreen();
+
     }
   }
 
@@ -43,7 +51,6 @@ public class Main {
     System.out.flush();
   }
 }
-    /*
     // stage 2
     Scanner scanner = new Scanner(in);
     final int UniverseSize = scanner.nextInt();
@@ -56,9 +63,11 @@ public class Main {
       universe = getNextGeneration(universe);
     }
     universe.print();
-*/
 
-    /*//stage 1
+
+
+//*
+/stage 1
     Scanner scanner = new Scanner(in);
     int arraySize = scanner.nextInt();
     int seed = scanner.nextInt();
@@ -74,5 +83,8 @@ public class Main {
       }
       System.out.println();
     }*/
+  }
+}
+
 
 

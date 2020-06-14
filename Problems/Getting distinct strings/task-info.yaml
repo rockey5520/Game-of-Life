@@ -1,0 +1,20 @@
+type: code
+files:
+- name: src/Main.java
+  visible: true
+  text: |-
+    import java.util.function.UnaryOperator;
+    import java.util.stream.Collectors;
+
+
+    class Operator {
+
+        public static UnaryOperator<List<String>> unaryOperator = // Write yor code here
+    }
+  learner_created: false
+- name: src/Solution.java
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/learn/step/2366
+status: Solved
+record: -1

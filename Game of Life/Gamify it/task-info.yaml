@@ -1,17 +1,6 @@
 type: edu
 custom_name: stage5
 files:
-- name: src/life/ApplicationRunner.java
-  visible: true
-  text: |
-    package life;
-
-    public class ApplicationRunner {
-        public static void main(String[] args) {
-            new GameOfLife();
-        }
-    }
-  learner_created: false
 - name: src/life/GameOfLife.java
   visible: true
   text: |
@@ -348,6 +337,587 @@ files:
         }
     }
   learner_created: false
+- name: src/life/Earth.java
+  visible: true
+  text: |-
+    package life;
+
+    import java.util.Random;
+
+    public class Earth {
+      private char[][] array;
+      private int earthSize;
+      public int aliveCount;
+      private Random rand;
+
+      public Earth(int earthSize, long seed){
+        this.array = new char[earthSize][earthSize];
+        this.earthSize = earthSize;
+        this.rand = new Random(seed);
+        this.initialize();
+      }
+
+      public Earth(int earthSize){
+        this.array = new char[earthSize][earthSize];
+        this.earthSize = earthSize;
+      }
+
+      public void initialize(){
+        aliveCount = 0;
+        for(int y=0; y<earthSize; y++){
+          for(int x=0;x<earthSize; x++){
+            if(rand.nextBoolean()){
+              array[y][x] = 'O';
+              aliveCount++;
+            }
+            else{
+              array[y][x] =  ' ';
+            }
+          }
+        }
+      }
+
+      private void setArrayPoint(int y, int x, char value){
+        this.array[y][x] = value;
+      }
+
+      public Earth evolute(){
+        Earth nextGen = new Earth(this.earthSize);
+        for(int y=0; y<earthSize; y++){
+          for(int x=0;x<earthSize; x++){
+            Boolean alive = deadOrAlive(y,x);
+            int neighbours = countNeighbours(x,y);
+            if((neighbours==2 && alive)||neighbours==3){
+              nextGen.setArrayPoint(y,x,'O');
+              nextGen.aliveCount++;
+            }
+            else{
+              nextGen.setArrayPoint(y,x,' ');
+            }
+          }
+        }
+        return nextGen;
+      }
+
+      public int getAliveCount() {
+        return aliveCount;
+      }
+
+      private Boolean deadOrAlive(int y, int x){
+        if(array[y][x] == 'O'){
+          return true;
+        }
+        else{
+          return false;
+        }
+      }
+
+      private int countNeighbours(int y, int x){
+        int neighbours = 0;
+        if(this.array[proper(x-1)][proper(y-1)]=='O'){
+          neighbours +=1;
+        }
+        if(this.array[proper(x-1)][proper(y)]=='O'){
+          neighbours +=1;
+        }
+        if(this.array[proper(x-1)][proper(y+1)]=='O'){
+          neighbours +=1;
+        }
+        if(this.array[proper(x)][proper(y-1)]=='O'){
+          neighbours +=1;
+        }
+        if(this.array[proper(x)][proper(y+1)]=='O'){
+          neighbours +=1;
+        }
+        if(this.array[proper(x+1)][proper(y-1)]=='O'){
+          neighbours +=1;
+        }
+        if(this.array[proper(x+1)][proper(y)]=='O'){
+          neighbours +=1;
+        }
+        if(this.array[proper(x+1)][proper(y+1)]=='O'){
+          neighbours +=1;
+        }
+        return neighbours;
+      }
+
+      private int proper(int input){
+        if(input<0) {
+          input = earthSize - Math.abs(input);
+        }
+        if (input>=earthSize){
+          input = input - earthSize;
+        }
+        return input;
+      }
+
+      public char[][] getArray(){
+        return array;
+      }
+
+      @Override
+      public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for(char[] row:this.array){
+          sb.append(String.copyValueOf(row));
+          sb.append("\n");
+        }
+        return sb.toString();
+      }
+    }
+  learner_created: true
+- name: src/life/Universe.java
+  visible: true
+  text: |-
+    package life;
+
+
+    class Universe {
+      static private int[] shift = {-1, 0, 1};
+
+      private int generation = 0;
+      private int size;
+      Cell[][] universe;
+
+      public Universe(int size) {
+        this.size = size;
+        universe = new Cell[this.size][this.size];
+
+        for (int i = 0; i < this.size; ++i) {
+          for (int j = 0; j < this.size; ++j) {
+            universe[i][j] = new Cell();
+          }
+        }
+      }
+
+      public int getSize() {
+        return size;
+      }
+
+      public int getGeneration() {
+        return generation;
+      }
+
+      public void setGeneration(int generation) {
+        this.generation = generation;
+      }
+
+      public void increaseGeneration() {
+        ++generation;
+      }
+
+      public Cell[][] getUniverse() {
+        return universe;
+      }
+
+      public Cell[] at(int i) {
+        return universe[i];
+      }
+
+      public Cell at(int i, int j) {
+        return universe[i][j];
+      }
+
+      public byte countAliveNeighbours(int i, int j) {
+        byte alive = 0;
+
+        for (int i_idx : shift) {
+          for (int j_idx : shift) {
+            if (i_idx == j_idx && i_idx == 0) {
+              continue;
+            }
+
+            int x = (i + i_idx) % size;
+            if (x < 0) {
+              x = size - 1;
+            }
+
+            int y = (j + j_idx) % size;
+            if (y < 0) {
+              y = size - 1;
+            }
+            if (universe[x][y].isAlive()) {
+              ++alive;
+            }
+          }
+        }
+
+        return alive;
+      }
+
+      static void copy(Universe from, Universe to) {
+        int size = from.getSize();
+        for (int i = 0; i < size; ++i) {
+          for (int j = 0; j < size; ++j) {
+            Cell cell = to.at(i, j);
+            cell.setState(from.at(i, j).isAlive());
+          }
+        }
+      }
+
+      public int getNumberOfAliveCells() {
+        int alive = 0;
+
+        for (Cell[] row : universe) {
+          for (Cell cell : row) {
+            alive += cell.isAlive() ? 1 : 0;
+          }
+        }
+
+        return alive;
+      }
+    }
+  learner_created: true
+- name: src/life/DrawPanel.java
+  visible: true
+  text: |-
+    package life;
+
+    import java.awt.BasicStroke;
+    import java.awt.EventQueue;
+    import java.awt.Graphics;
+    import java.awt.Graphics2D;
+    import javax.swing.JFrame;
+    import javax.swing.JPanel;
+
+    class DrawPanel extends JPanel {
+      int size;
+      public DrawPanel(int size){
+        super();
+        this.size = size;
+      }
+
+      private void doDrawing(Graphics g) {
+
+        var g2d = (Graphics2D) g;
+        for(int i=1; i<=size; i++) {
+          g2d.drawLine(0, i*(getHeight()/size), getWidth(), i*(getHeight()/size));
+          g2d.drawLine(i*(getWidth()/size), 0, i*(getWidth()/size), getHeight());
+        }
+      }
+
+      @Override
+      public void paintComponent(Graphics g) {
+
+        super.paintComponent(g);
+        doDrawing(g);
+      }
+    }
+  learner_created: true
+- name: src/life/Cell.java
+  visible: true
+  text: |-
+    package life;
+
+    class Cell {
+      private boolean state;
+
+      public Cell() {
+        this.state = false;
+      }
+
+      public void setState(boolean state) {
+        this.state = state;
+      }
+
+      public void Die() {
+        this.state = false;
+      }
+
+      public void Alive() {
+        this.state = true;
+      }
+
+      public boolean isAlive() {
+        return state;
+      }
+    }
+  learner_created: true
+- name: src/life/UniverseGenerator.java
+  visible: true
+  text: |-
+    package life;
+
+
+    import java.util.Random;
+
+    abstract class UniverseGenerator {
+
+      static boolean fillCell(Random randomizer) {
+        return randomizer.nextBoolean();
+      }
+
+      static void createUniverse(Universe universe) {
+        Random randomize = new Random();
+        universe.setGeneration(0);
+        int size = universe.getSize();
+        for (int i = 0; i < size; ++i) {
+          Cell[] cells = universe.at(i);
+          for (Cell cell : cells) {
+            cell.setState(fillCell(randomize));
+          }
+        }
+      }
+
+      static void evolve(Universe universe) {
+        int size = universe.getSize();
+        Universe tmp = new Universe(size);
+
+        for (int i = 0; i < size; ++i) {
+          for (int j = 0; j < size; ++j) {
+            Cell cell = universe.at(i, j);
+            byte aliveNeighbours = universe.countAliveNeighbours(i, j);
+
+            if (cell.isAlive() && (aliveNeighbours < 2 || aliveNeighbours > 3)) {
+              tmp.at(i, j).Die();
+            } else if (!cell.isAlive() && aliveNeighbours == 3) {
+              tmp.at(i, j).Alive();
+            } else {
+              tmp.at(i, j).setState(universe.at(i, j).isAlive());
+            }
+          }
+        }
+
+        Universe.copy(tmp, universe);
+      }
+    }
+  learner_created: true
+- name: src/life/DrawUI.java
+  visible: true
+  text: |-
+    package life;
+
+    import javax.swing.*;
+    import java.awt.*;
+
+    public class DrawUI extends JFrame {
+
+      private JLabel generation;
+      private JLabel alive;
+      private JPanel jp;
+      private final int boardSize;
+
+      public DrawUI(int boardSize){
+        super("Game of Life");
+        this.boardSize = boardSize;
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(700, 800);
+        setLocationRelativeTo(null);
+        paintComponent();
+        generation = new JLabel("GenerationLabel");
+        generation.setBounds(5,5, 490, 15);
+
+        alive = new JLabel("AliveLabel");
+        alive.setBounds(5, 25, 490, 15);
+
+        add(generation);
+        add(alive);
+        {add(jp);}
+
+        setLayout(null);
+        setVisible(true);
+      }
+
+      public void setGeneration(int genCount){
+        generation.setText("Generation #"+genCount);
+      }
+
+      public void setAlive(int aliveCount){
+        alive.setText("Alive: "+aliveCount);
+      }
+
+      public void paintComponent(){
+        this.jp = new DrawPanel(boardSize);
+        jp.setBounds(100,100,500,500);
+        jp.setLayout(new BorderLayout());
+        jp.setBackground(Color.GRAY);
+        jp.setLayout(new BorderLayout());
+      }
+
+      public void paintComponent(Earth earth){
+        //paintComponent();
+
+        Graphics g = jp.getGraphics();
+        var g2d = (Graphics2D) g;
+
+        char[][] array = earth.getArray();
+        for(int y=0; y<boardSize; y++){
+          for(int x=0;x<boardSize; x++){
+            if(array[y][x]==' '){
+              g2d.setColor(Color.BLACK);
+              int recHeight = getHeight()/boardSize;
+              int recWidth = getWidth()/boardSize;
+              g2d.fillRect(x*recHeight, y*recWidth, (y+1)*recWidth, (y+1)*recHeight);
+            }
+          }
+          g2d.dispose();
+
+
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          jp.updateUI();
+          repaint();
+        }
+      }
+    }
+  learner_created: true
+- name: src/life/GenerationAlgorithm.java
+  visible: true
+  text: |
+    /*
+    package life;
+
+    public class GenerationAlgorithm {
+      static Universe getNextGeneration(Universe currentUniverse) {
+        Universe nextGeneration = new Universe(currentUniverse.size());
+
+        for (int row = 0; row < currentUniverse.size(); ++row) {
+          for (int col = 0; col < currentUniverse.size(); ++col) {
+            final int neighbours = currentUniverse.getNeighboursCount(row, col);
+            final var isLive = neighbours == 3 || neighbours == 2 && currentUniverse.isLive(row, col);
+            nextGeneration.setCell(row, col, isLive);
+          }
+        }
+        return nextGeneration;
+      }
+    }*/
+  learner_created: true
+- name: src/life/Controller.java
+  visible: true
+  text: |+
+    package life;
+
+    public class Controller {
+      Universe universe;
+      GameOfLife gameOfLife;
+
+      public Controller(Universe universe, GameOfLife gameOfLife) {
+        this.universe = universe;
+        UniverseGenerator.createUniverse(this.universe);
+        this.gameOfLife = gameOfLife;
+        this.gameOfLife.init(this.universe.getSize());
+      }
+
+      public void showUniverse() {
+        gameOfLife.processUniverse(universe);
+      }
+
+      public void evolve() {
+        try {
+          Thread.sleep(gameOfLife.getEvolutionSpeed());
+        } catch (InterruptedException ignored) {
+        }
+        if (gameOfLife.isNeedToRestart()) {
+          UniverseGenerator.createUniverse(universe);
+          gameOfLife.setNeedToRestart(false);
+        }
+
+        if (gameOfLife.getEvolutionSpeed() != 0) {
+          UniverseGenerator.evolve(universe);
+          universe.increaseGeneration();
+          gameOfLife.processUniverse(universe);
+        }
+      }
+    }
+
+  learner_created: true
+- name: src/life/Main.java
+  visible: true
+  text: |+
+    package life;
+
+    import static java.lang.System.in;
+
+    import java.io.IOException;
+
+
+    import java.util.Scanner;
+
+    public class Main {
+
+      public static void main(String[] args) throws InterruptedException {
+        //stage 4
+        Controller controller = new Controller(new Universe(50), new GameOfLife());
+        controller.showUniverse();
+        while (true) {
+          controller.evolve();
+        }
+    /*//stage 3
+      Scanner scanner = new Scanner(in);
+        int universeSize = scanner.nextInt();
+        final int generations = 11;
+        scanner.close();
+
+        Universe universe = new Universe(universeSize).initialise();
+
+        for (int i = 0; i < generations; ++i) {
+          System.out.printf("Generation #%d%nAlive: %d%n", universe.getGeneration(),
+              universe.getAliveCount());
+          universe.printMap();
+          universe.nextGeneration();
+          Thread.sleep(1000);
+          clearScreen();
+
+        }
+      }
+
+      static void clearScreenOld() {
+        try {
+          if (System.getProperty("os.name").contains("Windows"))
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+          else
+            Runtime.getRuntime().exec("clear");
+        } catch (IOException | InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+
+      public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+      }
+    }
+        // stage 2
+        Scanner scanner = new Scanner(in);
+        final int UniverseSize = scanner.nextInt();
+        final long seed = scanner.nextLong();
+        final int generations = scanner.nextInt();
+        scanner.close();
+
+        Universe universe = new Universe(UniverseSize, seed);
+        for (int i = 0; i < generations; ++i) {
+          universe = getNextGeneration(universe);
+        }
+        universe.print();
+
+
+
+    //*
+    /stage 1
+        Scanner scanner = new Scanner(in);
+        int arraySize = scanner.nextInt();
+        int seed = scanner.nextInt();
+        Random random = new Random(seed);
+
+        for (int i = 0; i < arraySize; i++) {
+          for (int j = 0; j < arraySize; j++) {
+            if (random.nextBoolean()) {
+              System.out.print("O");
+            } else {
+              System.out.print(" ");
+            }
+          }
+          System.out.println();
+        }*/
+      }
+    }
+
+
+
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/54/stages/299/implement
-status: Unchecked
+status: Solved
 record: -1

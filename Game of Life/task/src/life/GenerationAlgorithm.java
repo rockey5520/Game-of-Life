@@ -1,3 +1,4 @@
+/*
 package life;
 
 public class GenerationAlgorithm {
@@ -13,4 +14,4 @@ public class GenerationAlgorithm {
     }
     return nextGeneration;
   }
-}
+}*/

@@ -14,9 +14,15 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Game of Life/task" />
             <option value="$PROJECT_DIR$/Problems/A long process" />
+            <option value="$PROJECT_DIR$/Problems/Calculate the number of distinct characters" />
             <option value="$PROJECT_DIR$/Problems/Getting current thread info" />
+            <option value="$PROJECT_DIR$/Problems/Numbers filter" />
+            <option value="$PROJECT_DIR$/Problems/Ordering the execution of threads" />
             <option value="$PROJECT_DIR$/Problems/Output names of the methods" />
             <option value="$PROJECT_DIR$/Problems/Returning values from an anonymous class" />
+            <option value="$PROJECT_DIR$/Problems/Starting threads" />
+            <option value="$PROJECT_DIR$/Problems/String processor" />
+            <option value="$PROJECT_DIR$/Problems/VeganPizza" />
             <option value="$PROJECT_DIR$/Problems/Writing a thread for printing numbers" />
             <option value="$PROJECT_DIR$/util" />
           </set>

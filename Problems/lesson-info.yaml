@@ -4,3 +4,9 @@ content:
 - Output names of the methods
 - Getting current thread info
 - Writing a thread for printing numbers
+- Numbers filter
+- Starting threads
+- String processor
+- VeganPizza
+- Ordering the execution of threads
+- Calculate the number of distinct characters

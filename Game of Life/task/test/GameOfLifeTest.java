@@ -1,6 +1,6 @@
 
-import common.GameOfLifeStage3Test;
+import common.GameOfLifeStage4Test;
 
-public class GameOfLifeTest extends GameOfLifeStage3Test {
+public class GameOfLifeTest extends GameOfLifeStage4Test {
 
 }
